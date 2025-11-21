@@ -604,7 +604,31 @@ function Install-JetBrainsProduct {
         Write-Debug "Using default config path: $productConfigDir"
     }
 
-    # Handle .vmoptions files
+    # Handle .vmoptions files in installation bin directory (higher priority)
+    # These files in bin directory take precedence over config directory files
+    $binVMOptionsPatterns = @(
+        "$objProductName.exe.vmoptions",
+        "$objProductName`64.exe.vmoptions",
+        "jetbrains_client.exe.vmoptions",
+        "jetbrains_client64.exe.vmoptions"
+    )
+    
+    $binVMFilesFound = 0
+    foreach ($pattern in $binVMOptionsPatterns) {
+        $binVMFile = Join-Path $binDir $pattern
+        if (Test-Path $binVMFile) {
+            Write-Info "Configuring bin directory vmoptions: $pattern"
+            Clear-VMOptions $binVMFile
+            Add-VMOptions $binVMFile
+            $binVMFilesFound++
+        }
+    }
+    
+    if ($binVMFilesFound -gt 0) {
+        Write-Success "Modified $binVMFilesFound .vmoptions file(s) in installation bin directory"
+    }
+
+    # Handle .vmoptions files in user config directory
     $vmOptionsPattern = "*$objProductName.vmoptions"
     $vmOptionsFiles = Get-ChildItem -Path $productConfigDir -Filter $vmOptionsPattern -ErrorAction SilentlyContinue
 
@@ -619,7 +643,7 @@ function Install-JetBrainsProduct {
         Add-VMOptions $defaultVMFile
     }
 
-    # Handle jetbrains_client.vmoptions
+    # Handle jetbrains_client.vmoptions in config directory
     $clientVMFile = Join-Path $productConfigDir "jetbrains_client.vmoptions"
     if (Test-Path $clientVMFile) {
         Clear-VMOptions $clientVMFile

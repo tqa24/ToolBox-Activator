@@ -611,7 +611,25 @@ handle_jetbrains_dir() {
 
     local dir_config_product="${dir_config_jb}/${dir_product_name}"
 
-    # Find all .vmoptions files first
+    # Handle .vmoptions files in installation bin directory (higher priority)
+    # These files in bin directory may take precedence over config directory files
+    local bin_vmoptions_patterns=(
+        "${obj_product_name}.vmoptions"
+        "${obj_product_name}64.vmoptions"
+        "jetbrains_client.vmoptions"
+        "jetbrains_client64.vmoptions"
+    )
+    
+    for pattern in "${bin_vmoptions_patterns[@]}"; do
+        local bin_vmfile="${dir_bin}/${pattern}"
+        if [ -f "$bin_vmfile" ]; then
+            debug "Found bin directory vmoptions file: $bin_vmfile"
+            clean_vmoptions "$bin_vmfile"
+            append_vmoptions "$bin_vmfile"
+        fi
+    done
+
+    # Find all .vmoptions files in config directory
     files=("${dir_config_product}"/*${FILE_VMOPTIONS})
 
     # Check if files were actually found

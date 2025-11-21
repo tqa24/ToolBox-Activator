@@ -248,14 +248,18 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 - Попробуйте запустить скрипт позже
 - Проверьте доступность `https://ckey.run`
 
-#### 4. "Лицензионные ключи не работают"
+#### 4. "Лицензионные ключи не работают" / "Key is invalid"
 
-**Проблема**: Некорректные ключи или блокировка сервера
+**Проблема**: Некорректные ключи, блокировка сервера, или .vmoptions файлы не настроены правильно
 
 **Решение**:
 
 - Убедитесь, что скопировали ключи полностью
 - Проверьте формат активации в JetBrains IDE
+- **Важно**: Скрипт автоматически настраивает .vmoptions файлы как в директории установки (bin), так и в конфигурационной директории
+- На Windows: Скрипт модифицирует `idea64.exe.vmoptions`, `jetbrains_client64.exe.vmoptions` и другие файлы в папке bin установки IDE
+- Убедитесь, что IDE была полностью закрыта перед запуском скрипта
+- Перезапустите IDE после активации
 - Попробуйте создать новую лицензию с другими параметрами
 
 #### 5. "Ошибка .vmoptions файлов"
@@ -578,14 +582,18 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 - Try running the script later
 - Check availability of `https://ckey.run`
 
-#### 4. "License keys don't work"
+#### 4. "License keys don't work" / "Key is invalid"
 
-**Problem**: Incorrect keys or server blocking
+**Problem**: Incorrect keys, server blocking, or .vmoptions files not configured correctly
 
 **Solution**:
 
 - Ensure you copied keys completely
 - Check activation format in JetBrains IDE
+- **Important**: The script automatically configures .vmoptions files in both the installation directory (bin) and the configuration directory
+- On Windows: The script modifies `idea64.exe.vmoptions`, `jetbrains_client64.exe.vmoptions`, and other files in the IDE installation bin folder
+- Make sure the IDE was completely closed before running the script
+- Restart the IDE after activation
 - Try creating new license with different parameters
 
 #### 5. ".vmoptions file error"
