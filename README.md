@@ -248,7 +248,22 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 - Попробуйте запустить скрипт позже
 - Проверьте доступность `https://ckey.run`
 
-#### 4. "Лицензионные ключи не работают" / "Key is invalid"
+#### 4. "Не вижу лицензионные ключи" / "Keys not displayed"
+
+**Проблема**: Скрипт говорит "License keys are shown above", но ключи не видны в выводе
+
+**Решение**:
+
+- Лицензионные ключи отображаются **зелёным цветом** в секциях с заголовком `=== LICENSE KEY FOR [PRODUCT] ===`
+- Прокрутите вывод терминала вверх, чтобы найти ключи для каждого продукта
+- Если вы не видите ни одного продукта, проверьте:
+  - Убедитесь, что JetBrains IDE установлены
+  - Запустите каждую IDE хотя бы один раз для создания конфигурации
+  - Проверьте наличие директории `~/.cache/JetBrains` (Linux/macOS) или `%LOCALAPPDATA%\JetBrains` (Windows)
+- Если скрипт показывает "No JetBrains products found", установите IDE и запустите их перед повторным запуском скрипта
+- На Linux: Убедитесь, что запускаете скрипт с правами `sudo` если необходимо
+
+#### 5. "Лицензионные ключи не работают" / "Key is invalid"
 
 **Проблема**: Некорректные ключи, блокировка сервера, или .vmoptions файлы не настроены правильно
 
@@ -262,7 +277,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 - Перезапустите IDE после активации
 - Попробуйте создать новую лицензию с другими параметрами
 
-#### 5. "Ошибка .vmoptions файлов"
+#### 6. "Ошибка .vmoptions файлов"
 
 **Проблема**: Проблемы с правами доступа или существующими настройками
 
@@ -582,7 +597,22 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 - Try running the script later
 - Check availability of `https://ckey.run`
 
-#### 4. "License keys don't work" / "Key is invalid"
+#### 4. "Can't see license keys" / "Keys not displayed"
+
+**Problem**: Script says "License keys are shown above", but keys are not visible in output
+
+**Solution**:
+
+- License keys are displayed in **GREEN color** in sections with header `=== LICENSE KEY FOR [PRODUCT] ===`
+- Scroll up in your terminal to find the keys for each product
+- If you don't see any products at all, check:
+  - Make sure JetBrains IDEs are installed
+  - Run each IDE at least once to create its configuration
+  - Verify `~/.cache/JetBrains` (Linux/macOS) or `%LOCALAPPDATA%\JetBrains` (Windows) directory exists
+- If script shows "No JetBrains products found", install IDEs and run them before re-running the script
+- On Linux: Make sure you run the script with `sudo` permissions if needed
+
+#### 5. "License keys don't work" / "Key is invalid"
 
 **Problem**: Incorrect keys, server blocking, or .vmoptions files not configured correctly
 
@@ -596,7 +626,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 - Restart the IDE after activation
 - Try creating new license with different parameters
 
-#### 5. ".vmoptions file error"
+#### 6. ".vmoptions file error"
 
 **Problem**: Permission issues or existing settings
 

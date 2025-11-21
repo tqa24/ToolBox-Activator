@@ -457,6 +457,7 @@ function Get-Resources {
         Show-ProgressBar $count $totalFiles
     }
     Write-Host ""
+    Write-Host ""
 }
 
 # ============ Clean and Update .vmoptions Files =============
@@ -533,18 +534,26 @@ function New-License {
         Invoke-RestMethod -Uri $URL_LICENSE -Method Post -Body $jsonBody -ContentType "application/json" -OutFile $licenseFile
 
         if (Test-Path $licenseFile) {
+            Write-Host ""
             Write-Success "$ProductDir activation successful!"
+            Write-Host ""
 
             # Show license key in terminal
             Write-Info "=== LICENSE KEY FOR $ProductDir ==="
-            Write-ColoredMessage (Get-Content $licenseFile -Raw) $Colors.Green
-            Write-Info "Copy the key above and use it to activate $ProductDir"
             Write-Host ""
+            Write-ColoredMessage (Get-Content $licenseFile -Raw) $Colors.Green
+            Write-Host ""
+            Write-Info "Copy the key above and use it to activate $ProductDir"
+            Write-Info "==========================================="
+            Write-Host ""
+            return $true
         } else {
             Write-Warning "$ProductDir requires manual license key entry!"
+            return $false
         }
     } catch {
         Write-Warning "$ProductDir requires manual license key entry!"
+        return $false
     }
 }
 
@@ -565,7 +574,7 @@ function Install-JetBrainsProduct {
     }
 
     if ([string]::IsNullOrEmpty($objProductName)) {
-        return
+        return $false
     }
 
     Write-Info "Processing: $productDirName"
@@ -573,7 +582,7 @@ function Install-JetBrainsProduct {
     $homeFile = Join-Path $ProductDir ".home"
     if (-not (Test-Path $homeFile)) {
         Write-Warning ".home file not found for $productDirName"
-        return
+        return $false
     }
 
     Write-Debug ".home path: $homeFile"
@@ -581,7 +590,7 @@ function Install-JetBrainsProduct {
     $installPath = Get-Content $homeFile -Raw
     if (-not (Test-Path $installPath)) {
         Write-Warning "Installation path not found for $productDirName!"
-        return
+        return $false
     }
 
     Write-Debug ".home content: $installPath"
@@ -589,7 +598,7 @@ function Install-JetBrainsProduct {
     $binDir = Join-Path $installPath "bin"
     if (-not (Test-Path $binDir)) {
         Write-Warning "$productDirName bin directory does not exist, please confirm proper installation!"
-        return
+        return $false
     }
 
     # Check for custom config path in idea.properties
@@ -699,13 +708,40 @@ function Main {
 
     # Process all JetBrains products
     $productDirs = Get-ChildItem -Path $dir_cache_jb -Directory -ErrorAction SilentlyContinue
+    $productsFound = 0
+    $productsActivated = 0
     foreach ($dir in $productDirs) {
-        Install-JetBrainsProduct $dir.FullName
+        $productsFound++
+        if (Install-JetBrainsProduct $dir.FullName) {
+            $productsActivated++
+        }
     }
 
-    Write-Info "All items processed!"
-    Write-Info "License keys are shown above. Copy them and use for activation."
-    Write-Info "Enjoy using JetBrains IDE!"
+    Write-Host ""
+    Write-Host "============================================"
+    if ($productsFound -eq 0) {
+        Write-Warning "No JetBrains products found in $dir_cache_jb"
+        Write-Warning "Please make sure you have JetBrains IDEs installed and run them at least once."
+        Write-Host ""
+        Write-Info "TIP: Make sure you run PowerShell as Administrator"
+    } elseif ($productsActivated -eq 0) {
+        Write-Warning "Found $productsFound product(s) but could not activate any!"
+        Write-Host ""
+        Write-Info "Common issues and solutions:"
+        Write-Warning "1. Make sure all JetBrains IDEs are completely closed"
+        Write-Warning "2. Run PowerShell as Administrator (right-click -> Run as Administrator)"
+        Write-Warning "3. Check that IDEs were run at least once to create configuration"
+        Write-Warning "4. Check file permissions in $dir_cache_jb and $dir_config_jb"
+    } else {
+        Write-Success "Successfully activated $productsActivated out of $productsFound product(s)!"
+        Write-Host ""
+        Write-Info "IMPORTANT: License keys are displayed above in GREEN color for each product."
+        Write-Info "Look for sections marked with '=== LICENSE KEY FOR [PRODUCT] ==='"
+        Write-Info "Copy each key and paste it into the corresponding IDE activation dialog."
+        Write-Host ""
+        Write-Info "Enjoy using JetBrains IDE!"
+    }
+    Write-Host "============================================"
 }
 
 # Run main function
