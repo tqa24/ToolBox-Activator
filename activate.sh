@@ -567,8 +567,10 @@ generate_license() {
         info "Copy the key above and use it to activate ${dir_product_name}"
         info "==========================================="
         echo ""
+        return 0
     else
         warning "${dir_product_name} requires manual license key entry!"
+        return 1
     fi
 }
 
@@ -690,21 +692,36 @@ main() {
 
     do_download_resources
 
-    local products_processed=0
+    local products_found=0
+    local products_activated=0
     for dir in "${dir_cache_jb}"/*; do
         if [ -d "$dir" ]; then
-            handle_jetbrains_dir "$dir"
-            ((products_processed++))
+            ((products_found++))
+            if handle_jetbrains_dir "$dir"; then
+                ((products_activated++))
+            fi
         fi
     done
 
     echo ""
     echo "============================================"
-    if [ $products_processed -eq 0 ]; then
+    if [ $products_found -eq 0 ]; then
         warning "No JetBrains products found in ${dir_cache_jb}"
         warning "Please make sure you have JetBrains IDEs installed and run them at least once."
+        echo ""
+        info "TIP: On Linux, you may need to run the script with 'sudo' permissions:"
+        info "    sudo ./activate.sh"
+    elif [ $products_activated -eq 0 ]; then
+        error "Found $products_found product(s) but could not activate any!"
+        echo ""
+        warning "Common issues:"
+        warning "1. Make sure all JetBrains IDEs are completely closed"
+        warning "2. On Linux, try running the script with 'sudo' permissions:"
+        warning "       sudo ./activate.sh"
+        warning "3. Check that IDEs were run at least once to create configuration"
+        warning "4. Check file permissions in ~/.cache/JetBrains and ~/.config/JetBrains"
     else
-        success "All items processed!"
+        success "Successfully activated $products_activated out of $products_found product(s)!"
         echo ""
         info "IMPORTANT: License keys are displayed above in GREEN color for each product."
         info "Look for sections marked with '=== LICENSE KEY FOR [PRODUCT] ==='"

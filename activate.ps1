@@ -546,11 +546,14 @@ function New-License {
             Write-Info "Copy the key above and use it to activate $ProductDir"
             Write-Info "==========================================="
             Write-Host ""
+            return $true
         } else {
             Write-Warning "$ProductDir requires manual license key entry!"
+            return $false
         }
     } catch {
         Write-Warning "$ProductDir requires manual license key entry!"
+        return $false
     }
 }
 
@@ -705,19 +708,32 @@ function Main {
 
     # Process all JetBrains products
     $productDirs = Get-ChildItem -Path $dir_cache_jb -Directory -ErrorAction SilentlyContinue
-    $productsProcessed = 0
+    $productsFound = 0
+    $productsActivated = 0
     foreach ($dir in $productDirs) {
-        Install-JetBrainsProduct $dir.FullName
-        $productsProcessed++
+        $productsFound++
+        if (Install-JetBrainsProduct $dir.FullName) {
+            $productsActivated++
+        }
     }
 
     Write-Host ""
     Write-Host "============================================"
-    if ($productsProcessed -eq 0) {
+    if ($productsFound -eq 0) {
         Write-Warning "No JetBrains products found in $dir_cache_jb"
         Write-Warning "Please make sure you have JetBrains IDEs installed and run them at least once."
+        Write-Host ""
+        Write-Info "TIP: Make sure you run PowerShell as Administrator"
+    } elseif ($productsActivated -eq 0) {
+        Write-Error "Found $productsFound product(s) but could not activate any!"
+        Write-Host ""
+        Write-Warning "Common issues:"
+        Write-Warning "1. Make sure all JetBrains IDEs are completely closed"
+        Write-Warning "2. Run PowerShell as Administrator (right-click -> Run as Administrator)"
+        Write-Warning "3. Check that IDEs were run at least once to create configuration"
+        Write-Warning "4. Check file permissions in $dir_cache_jb and $dir_config_jb"
     } else {
-        Write-Success "All items processed!"
+        Write-Success "Successfully activated $productsActivated out of $productsFound product(s)!"
         Write-Host ""
         Write-Info "IMPORTANT: License keys are displayed above in GREEN color for each product."
         Write-Info "Look for sections marked with '=== LICENSE KEY FOR [PRODUCT] ==='"
