@@ -4,9 +4,6 @@
 ### 🎯 The All-in-One Automation for JetBrains IDE Activation
 
 **Effortless, cross-platform activation for the entire JetBrains suite powered by ja-netfilter.**
-
-[📖 Installation](https://www.google.com/search?q=%23-installation-and-usage) • [🔧 Features](https://www.google.com/search?q=%23-key-features) • [💻 Supported IDEs](https://www.google.com/search?q=%23-supported-ides) • [🛠️ How It Works](https://www.google.com/search?q=%23-how-it-works)
-
 ---
 
 ```ascii
