@@ -133,8 +133,3 @@ The script follows a rigorous pipeline to ensure stability and success:
 Made with ❤️ by [neKamita](https://github.com/neKamita)
 
 </div>
-
----
-
-**Что я могу сделать дальше?**
-Я могу помочь перевести этот текст на другие языки или создать краткую версию (Cheat Sheet) для быстрой установки. Хотите, чтобы я что-то добавил?
